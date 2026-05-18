@@ -17,35 +17,6 @@ Instead of training models on centralized datasets, this project investigates wh
 
 The long-term goal is to produce a reusable **Agentic Economy Oracle** — a model that can be queried by other agents to better understand market dynamics, cooperation patterns, and system-level outcomes.
 
-## Architecture 
-
-+---------------------------------------------+
-|              Management Layer               |
-|         [ Fleet Dashboard ]                 |
-+--------------------┬------------------------+
-                     │
-+--------------------▼------------------------+
-|           Orchestration Layer               |
-|   [ Central Coordinator ] → [ GNN Oracle ]  |
-+--------------------┬------------------------+
-                     │
-+--------------------▼------------------------+
-|          Privacy & Data Layer               |
-|   NOVA  →  IPFS  +  nova-kv.near            |
-+--------------------┬------------------------+
-                     │
-+--------------------▼------------------------+
-|             IronClaw Fleet                  |
-|   Agent 1 │ Agent 2 │ ... │ Agent N         |
-|  (MESA + NetworkX + NOVA)                   |
-+--------------------┬------------------------+
-                     │
-+--------------------▼------------------------+
-|            Infrastructure                   |
-|     OVH VPS (Docker)  +  NEAR Testnet       |
-+---------------------------------------------+
-
-
 ## Key Components
 
 - **IronClaw Fleet**: Multiple autonomous agents running isolated workloads
