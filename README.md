@@ -19,48 +19,56 @@ The long-term goal is to produce a reusable **Agentic Economy Oracle** — a mod
 
 ## Architecture 
 
-┌─────────────────────────────────────────────────┐
-│            Management Layer                     │
-│  ┌──────────────────────────────┐               │
-│  │      Fleet Dashboard         │               │
-│  │   (Monitor + Control)        │               │
-│  └──────────────┬───────────────┘               │
-└─────────────────┼───────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│                   Orchestration Layer                       │
-│  ┌──────────────────────────────┐    ┌──────────────────┐   │
-│  │   Central Coordinator        │────│  Agentic Economy │   │
-│  │   (Federated Orchestrator)   │    │     Oracle       │   │
-│  └──────────────────────────────┘    │     (GNN model)  │   │
-│                                      └──────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                              ▲
-┌─────────────────────────────┼─────────┐
-│         Privacy & Data Layer          │
-│  ┌──────────┐   ┌──────────┐          │
-│  │   NOVA   │───│  IPFS    │          │
-│  │(Access   │   │(Encrypted│          │
-│  │ Control) │   │ Storage) │          │
-│  └──────────┘   └──────────┘          │
-└─────────────────────────────┼─────────┘
-                              │
-┌─────────────────────────────▼───────────────────┐
-│                      IronClaw Fleet             │
-│   ┌──────────┐  ┌──────────┐      ┌──────────┐  │
-│   │IronClaw 1│  │IronClaw 2│ ...  │IronClaw N│  │
-│   │(MESA +   │  │(MESA +   │      │(MESA +   │  │
-│   │ NetworkX)│  │ NetworkX)│      │ NetworkX)│  │
-│   └──────────┘  └──────────┘      └──────────┘  │
-└─────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────▼──────────────────────────────┐
-│                     Infrastructure                         │
-│   ┌──────────────────────┐     ┌──────────────────────┐    │
-│   │     OVH VPS          │     │    NEAR Testnet      │    │
-│   │  (Docker Isolated)   │     │   (Faucet Tokens)    │    │
-│   └──────────────────────┘     └──────────────────────┘    │
-└────────────────────────────────────────────────────────────┘
+flowchart TB
+    subgraph Infrastructure["Infrastructure Layer"]
+        VPS["OVH VPS<br/>(Docker Isolated)"]
+        Testnet["NEAR Testnet"]
+    end
+
+    subgraph Agents["IronClaw Fleet (10-30 agents)"]
+        IronClaw1["IronClaw Agent 1"]
+        IronClaw2["IronClaw Agent 2"]
+        IronClawN["IronClaw Agent N"]
+    end
+
+    subgraph Privacy["Privacy & Data Layer"]
+        NOVA["NOVA<br/>(Group Key Management + Access Control)"]
+        IPFS["IPFS<br/>(Encrypted Data Storage)"]
+    end
+
+    subgraph Orchestration["Orchestration & Training Layer"]
+        Coordinator["Central Coordinator<br/>(Federated Orchestrator)"]
+        GNN["Agentic Economy Model<br/>"]
+    end
+
+    subgraph Management["Management Layer"]
+        Dashboard["Fleet Dashboard<br/>"]
+    end
+
+    %% Connections
+    IronClaw1 & IronClaw2 & IronClawN -->|Generate synthetic data<br/>+ Export interaction graph| NOVA
+    NOVA -->|Encrypt + Pin| IPFS
+    NOVA -->|Store encrypted keys| KV
+
+    NOVA -->|Authorized access| Coordinator
+    IPFS -->|Encrypted contributions| Coordinator
+    Coordinator -->|Federated training| GNN
+
+    Dashboard -->|Monitor & Control| IronClaw1 & IronClaw2 & IronClawN
+    Dashboard -->|View training progress| Coordinator
+    Dashboard -->|Manage NOVA groups| NOVA
+
+    Coordinator -->|Export final model| Marketplace["NEAR AI Marketplace"]
+
+    classDef agent fill:#e0f2fe,stroke:#0369a1
+    classDef privacy fill:#fef3c7,stroke:#b45309
+    classDef training fill:#dcfce7,stroke:#166534
+    classDef infra fill:#f3e8ff,stroke:#6b21a8
+
+    class IronClaw1,IronClaw2,IronClawN agent
+    class NOVA,IPFS,KV privacy
+    class Coordinator,GNN training
+    class VPS,Testnet infra
 
 
 ## Key Components
