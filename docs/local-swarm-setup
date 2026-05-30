@@ -1,0 +1,192 @@
+# IronClaw Swarm Setup (Local Prototype)
+
+This document describes the exact, reproducible setup used for the first 5 IronClaw agents in the `ironclaw-swarm-economy` project.
+
+## Architecture Overview
+
+- **5 IronClaw agents** run in isolated Docker containers.
+- Each agent has its **own PostgreSQL database** (inside a shared PostgreSQL + pgvector container).
+- A **central Qdrant** instance is used as a lightweight system-level vector store.
+- IronClaw is **built from source** (no pre-built image is used).
+
+### Rationale for Key Choices
+
+| Component              | Choice                              | Rationale |
+|------------------------|-------------------------------------|---------|
+| **Per-agent storage**  | Separate PostgreSQL databases       | Maintains strong isolation between agents and full compatibility with IronClaw’s expected behavior. |
+| **System-level store** | Qdrant                              | Better suited than a single PostgreSQL table for storing structured signals + vectors needed to train the Agentic Economy Oracle. More flexible for future use. |
+| **IronClaw image**     | Built from source                   | The official `ghcr.io/nearai/ironclaw:latest` image is not publicly pullable. Building from source ensures reproducibility. |
+| **Vector search**      | Qdrant (central) + pgvector (local) | Hybrid approach: local pgvector for each agent’s internal memory, Qdrant for cross-agent/system-level data used by the Oracle. |
+
+## Final Docker Compose Configuration
+
+Use the following `docker-compose.yml` located in the `agents/` folder:
+
+```yaml
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ironclaw-postgres
+    environment:
+      POSTGRES_USER: ironclaw
+      POSTGRES_PASSWORD: your_strong_password_here
+      POSTGRES_DB: ironclaw
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ironclaw"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: ironclaw-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  ironclaw-agent1:
+    build:
+      context: https://github.com/nearai/ironclaw.git
+      dockerfile: Dockerfile
+    container_name: ironclaw-agent1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://ironclaw:your_strong_password_here@postgres:5432/ironclaw_agent1?sslmode=disable
+      NEAR_NETWORK: testnet
+      QDRANT_URL: http://qdrant:6333
+    volumes:
+      - ./data/agent1:/data
+    restart: unless-stopped
+
+  ironclaw-agent2:
+    build:
+      context: https://github.com/nearai/ironclaw.git
+      dockerfile: Dockerfile
+    container_name: ironclaw-agent2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://ironclaw:your_strong_password_here@postgres:5432/ironclaw_agent2?sslmode=disable
+      NEAR_NETWORK: testnet
+      QDRANT_URL: http://qdrant:6333
+    volumes:
+      - ./data/agent2:/data
+    restart: unless-stopped
+
+  ironclaw-agent3:
+    build:
+      context: https://github.com/nearai/ironclaw.git
+      dockerfile: Dockerfile
+    container_name: ironclaw-agent3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://ironclaw:your_strong_password_here@postgres:5432/ironclaw_agent3?sslmode=disable
+      NEAR_NETWORK: testnet
+      QDRANT_URL: http://qdrant:6333
+    volumes:
+      - ./data/agent3:/data
+    restart: unless-stopped
+
+  ironclaw-agent4:
+    build:
+      context: https://github.com/nearai/ironclaw.git
+      dockerfile: Dockerfile
+    container_name: ironclaw-agent4
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://ironclaw:your_strong_password_here@postgres:5432/ironclaw_agent4?sslmode=disable
+      NEAR_NETWORK: testnet
+      QDRANT_URL: http://qdrant:6333
+    volumes:
+      - ./data/agent4:/data
+    restart: unless-stopped
+
+  ironclaw-agent5:
+    build:
+      context: https://github.com/nearai/ironclaw.git
+      dockerfile: Dockerfile
+    container_name: ironclaw-agent5
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://ironclaw:your_strong_password_here@postgres:5432/ironclaw_agent5?sslmode=disable
+      NEAR_NETWORK: testnet
+      QDRANT_URL: http://qdrant:6333
+    volumes:
+      - ./data/agent5:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  qdrant_data:
+```
+
+## Setup Steps
+1. Create data directories
+```bash
+mkdir -p agents/data/agent{1,2,3,4,5}
+```
+
+2. Start all services
+```bash
+cd agents
+docker compose up -d --build
+```
+
+3. Create separable databases (run once)
+```bash
+docker exec -it ironclaw-postgres psql -U ironclaw -c "
+CREATE DATABASE ironclaw_agent1;
+CREATE DATABASE ironclaw_agent2;
+CREATE DATABASE ironclaw_agent3;
+CREATE DATABASE ironclaw_agent4;
+CREATE DATABASE ironclaw_agent5;
+"
+```
+
+4. Onboard each agents one by one
+- run `docker compose exec ironclaw-agentX ironclaw onboard`
+- Use the corresponding `DATABASE_URL` for each agent.
+- Prefer Ollama for embeddings.
+- Use `anthropic/claude-3-5-haiku-20241022` as the model.
+- Enable the HTTP channel.
+
+5. Configure NOVA + Testnet
+- Edit each agent’s environment (via mounted volume or `.env`).
+- Set `NEAR_NETWORK=testnet`.
+- Configure NOVA-related variables as needed.
+
+## Known Issues
+
+| Issue | Cause | Solution |
+| `denied` when pulling `ghcr.io/nearai/ironclaw:latest` | Official image is not publicly available | Build from source using the `docker-compose.yml` above |
+| Agents keep restarting after first start | Onboarding not completed yet | Complete `ironclaw onboard` for each agent |
+| Deprecated `version:` warning in docker-compose | Old docker-compose syntax | Remove the `version:` line (already done in the file above) |
+| Qdrant healthcheck shows "starting" for a while | Normal on first boot | Wait 10–20 seconds or increase `start_period` in healthcheck | 
+| PostgreSQL connection fails inside containers | Wrong `DATABASE_URL` or missing `?sslmode=disable` | Always include `?sslmode=disable` in the connection string |
