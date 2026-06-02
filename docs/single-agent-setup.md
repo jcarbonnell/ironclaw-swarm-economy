@@ -2,6 +2,10 @@
 
 This document defines the minimal, reproducible configuration for running **one IronClaw agent** that can join the swarm. It focuses on isolation, remote management, and the ability to securely contribute data via NOVA.
 
+Tested with: **IronClaw v0.28.2**, **Docker Compose v2**.
+
+---
+
 ## 1. Overview
 
 The goal is to run IronClaw agents as isolated, remotely manageable units that can:
@@ -11,79 +15,145 @@ The goal is to run IronClaw agents as isolated, remotely manageable units that c
 
 Each agent runs in its own Docker container with a clean, version-controlled configuration.
 
+---
+
 ## 2. Architecture Decisions for the Swarm
 
-- **Docker containers**: One agent = one container. This ensures strong isolation and easy scaling.
+- **Docker containers**: One agent = one container. Strong isolation and easy scaling.
 - **Remote management via SSH only**: No web-exposed admin interfaces. All access goes through SSH key authentication.
-- **HTTP channel enabled**: Each agent exposes a local HTTP endpoint (`127.0.0.1:8081`) so the central dashboard can query status and trigger actions.
+- **HTTP channel enabled**: Each agent exposes a local HTTP endpoint on port `8081` (inside the container) so the central dashboard can send messages and trigger actions.
 - **NOVA for data contribution**: Agents use NOVA groups to encrypt and share datasets (interaction graphs, simulation outputs) without exposing raw data.
-- **Ollama embeddings**: Local embeddings are used for memory and semantic capabilities (sovereign and low-cost).
+- **Ollama embeddings**: Shared local Ollama instance provides sovereign, zero-cost embeddings to all agents.
+- **Config via environment variables only**: Do not mount `/home/ironclaw/.ironclaw` as a volume — this causes UID permission failures on macOS and Linux hosts where the host user UID differs from the container's ironclaw user (UID 1000). All configuration is injected via compose environment variables.
+
+---
 
 ## 3. Minimal Reproducible Setup (Docker)
 
-### 3.1 Docker Compose Service (Recommended)
-
-Create a `docker-compose.yml` with the following service definition:
+### 3.1 Docker Compose Service
 
 ```yaml
 services:
   ironclaw-agent:
-    image: jcarbonnell/ironclaw-swarm-agent:latest   # or your custom image
+    build:
+      context: https://github.com/nearai/ironclaw.git
+      dockerfile: Dockerfile
     container_name: ironclaw-swarm-01
+    command: run --no-onboard
     restart: unless-stopped
-    env_file:
-      - .env
+    environment:
+      # Database
+      DATABASE_BACKEND: postgres
+      DATABASE_URL: postgresql://ironclaw:SimplePass123@postgres:5432/ironclaw_agent1?sslmode=disable
+
+      # Onboarding state
+      ONBOARD_COMPLETED: "true"
+      SECRETS_MASTER_KEY: "your_master_key_from_wizard"
+
+      # Embeddings
+      EMBEDDING_PROVIDER: ollama
+      EMBEDDING_MODEL: nomic-embed-text
+      OLLAMA_BASE_URL: http://ollama:11434
+
+      # HTTP channel
+      HTTP_ENABLED: "true"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8081"
+      HTTP_WEBHOOK_SECRET: "generate_with_openssl_rand_hex_32"
+
+      # Infrastructure
+      NEAR_NETWORK: testnet
+      QDRANT_URL: http://qdrant:6333
     volumes:
-      - ./data:/data
-      - ./ironclaw-data:/opt/ironclaw/.ironclaw
+      - ./data:/data                 # agent data only — do NOT mount ironclaw config dir
     ports:
-      - "127.0.0.1:8081:8081"   # HTTP channel (local only)
-    networks:
-      - swarm-net
+      - "127.0.0.1:8081:8081"        # local only — restrict to localhost on host
 ```
 
-### 3.2 Required Environment Variables (.env)
+> **Note**: `image: jcarbonnell/ironclaw-swarm-agent:latest` is not yet published. Build from source using `context: https://github.com/nearai/ironclaw.git`.
+
+### 3.2 Key Environment Variables
+
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `DATABASE_BACKEND` | `postgres` | Required explicitly in v0.28+ |
+| `DATABASE_URL` | `postgresql://...?sslmode=disable` | Alphanumeric password only; always include `?sslmode=disable` |
+| `ONBOARD_COMPLETED` | `"true"` | Prevents wizard from running on startup |
+| `SECRETS_MASTER_KEY` | from wizard | Generated during `ironclaw onboard`; must be in compose env |
+| `EMBEDDING_PROVIDER` | `ollama` | Wizard cannot configure Ollama — set via env instead |
+| `EMBEDDING_MODEL` | `nomic-embed-text` | 274MB, purpose-built for RAG |
+| `OLLAMA_BASE_URL` | `http://ollama:11434` | Docker service name, not localhost |
+| `HTTP_ENABLED` | `"true"` | Required — channel does not start without this |
+| `HTTP_HOST` | `"0.0.0.0"` | Bind inside container; restriction happens at port mapping level |
+| `HTTP_PORT` | `"8081"` | Same inside every container; host port differs per agent |
+| `HTTP_WEBHOOK_SECRET` | from `openssl rand -hex 32` | Used for HMAC-SHA256 request signing |
+
+Generate a webhook secret:
+```bash
+openssl rand -hex 32
+```
+
+---
+
+## 4. HTTP Webhook API
+
+The dashboard communicates with each agent via the HTTP webhook channel. In v0.28, authentication uses **HMAC-SHA256** (`X-Hub-Signature-256` header), not a raw secret header.
+
+### Sending a message
 
 ```bash
-# Core
-DATABASE_BACKEND=postgres
-DATABASE_URL=postgresql://ironclaw:password@host/ironclaw?sslmode=disable
+SECRET="your_webhook_secret"
+BODY='{"user_id": "default", "content": "your message here"}'
+SIG="sha256=$(echo -n "$BODY" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $2}')"
 
-# LLM
-LLM_BACKEND=nearai
-NEARAI_MODEL=anthropic/claude-sonnet-4-5
-NEARAI_API_KEY=your_key
-
-# Embeddings (local & sovereign)
-EMBEDDING_PROVIDER=ollama
-EMBEDDING_MODEL=nomic-embed-text
-OLLAMA_BASE_URL=http://ollama:11434
-
-# HTTP Channel (for dashboard)
-HTTP_HOST=127.0.0.1
-HTTP_PORT=8081
-HTTP_WEBHOOK_SECRET=generate-with-openssl-rand-hex-32
-
-# NOVA
-NOVA_CONTRACT_ID=nova-sdk.testnet   # or mainnet equivalent
-SHADE_API_URL=https://shade-agent-url
-
-# Security
-SECRETS_MASTER_KEY=your_master_key
+curl -X POST http://localhost:8081/webhook \
+  -H "Content-Type: application/json" \
+  -H "X-Hub-Signature-256: $SIG" \
+  -d "$BODY"
 ```
 
-**Rationale**: Using an env_file keeps secrets out of the compose file and makes per-agent configuration easy.
+### Response
 
-## 4. Multi-Agent Communication & Orchestration
+```json
+{"message_id": "<uuid>", "status": "accepted", "response": null}
+```
 
-Multiple IronClaw instances do not talk directly to each other. Instead, they follow this model:
+### Payload fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `user_id` | yes | Always `"default"` for swarm agents |
+| `content` | yes | Message content (note: `message` field from older docs is wrong in v0.28) |
+| `conversation_id` | no | Continue an existing conversation |
+
+---
+
+## 5. Multi-Agent Communication & Orchestration
+
+Multiple IronClaw instances do not talk directly to each other. Instead:
 
 - Each agent runs independently in its own container.
 - Agents contribute encrypted data (simulation graphs, decisions, outcomes) to **shared NOVA groups**.
-- A **central orchestrator** (running on the same VPS or another machine) pulls contributions via NOVA and coordinates training of the Agentic Economy Oracle.
-- A **central dashboard** polls each agent’s HTTP endpoint (/status) to monitor health, trigger routines, and display fleet-wide metrics.
-- Future task distribution and coordination between agents will be handled by the central orchestrator, not by direct peer-to-peer communication.
+- A **central orchestrator** pulls contributions via NOVA and coordinates training of the Agentic Economy Oracle.
+- A **central dashboard** sends messages to each agent via the HTTP webhook and displays fleet-wide metrics.
+- Coordination between agents is handled by the orchestrator, not by direct peer-to-peer communication.
 
-**Rationale**: This keeps individual agents simple and focused while centralizing intelligence and observability.
+This keeps individual agents simple and focused while centralizing intelligence and observability.
 
+---
 
+## 6. Remote Access (VPS Deployment)
+
+All agent ports are bound to `127.0.0.1` on the host — nothing is exposed to the public interface. Access remotely via SSH tunnel:
+
+```bash
+# Tunnel all 5 agent ports to your local machine
+ssh -L 8081:localhost:8081 \
+    -L 8082:localhost:8082 \
+    -L 8083:localhost:8083 \
+    -L 8084:localhost:8084 \
+    -L 8085:localhost:8085 \
+    user@vps-ip
+```
+
+The dashboard then reaches agents at `http://localhost:8081` through `http://localhost:8085` from your local machine.
