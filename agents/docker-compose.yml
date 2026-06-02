@@ -27,17 +27,27 @@ services:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:6333/healthz || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ironclaw-ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
 
   ironclaw-agent1:
     build:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent1
+    command: run --no-onboard
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,10 +56,20 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ironclaw_agent1?sslmode=disable
       NEAR_NETWORK: testnet
-      # QDRANT_URL will be used later by a sync skill / orchestrator
       QDRANT_URL: http://qdrant:6333
+      EMBEDDING_PROVIDER: ollama
+      EMBEDDING_MODEL: nomic-embed-text
+      OLLAMA_BASE_URL: http://ollama:11434
+      ONBOARD_COMPLETED: "true"
+      SECRETS_MASTER_KEY: "${AGENT1_SECRETS_MASTER_KEY}"
+      HTTP_ENABLED: "true"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8081"
+      HTTP_WEBHOOK_SECRET: "${AGENT1_WEBHOOK_SECRET}"
     volumes:
       - ./data/agent1:/data
+    ports:
+      - "127.0.0.1:8081:8081"
     restart: unless-stopped
 
   ironclaw-agent2:
@@ -57,6 +77,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent2
+    command: run --no-onboard
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,8 +87,19 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ironclaw_agent2?sslmode=disable
       NEAR_NETWORK: testnet
       QDRANT_URL: http://qdrant:6333
+      EMBEDDING_PROVIDER: ollama
+      EMBEDDING_MODEL: nomic-embed-text
+      OLLAMA_BASE_URL: http://ollama:11434
+      ONBOARD_COMPLETED: "true"
+      SECRETS_MASTER_KEY: "${AGENT2_SECRETS_MASTER_KEY}"
+      HTTP_ENABLED: "true"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8081"
+      HTTP_WEBHOOK_SECRET: "${AGENT2_WEBHOOK_SECRET}"
     volumes:
       - ./data/agent2:/data
+    ports:
+      - "127.0.0.1:8082:8081"
     restart: unless-stopped
 
   ironclaw-agent3:
@@ -75,6 +107,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent3
+    command: run --no-onboard
     depends_on:
       postgres:
         condition: service_healthy
@@ -84,8 +117,19 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ironclaw_agent3?sslmode=disable
       NEAR_NETWORK: testnet
       QDRANT_URL: http://qdrant:6333
+      EMBEDDING_PROVIDER: ollama
+      EMBEDDING_MODEL: nomic-embed-text
+      OLLAMA_BASE_URL: http://ollama:11434
+      ONBOARD_COMPLETED: "true"
+      SECRETS_MASTER_KEY: "${AGENT3_SECRETS_MASTER_KEY}"
+      HTTP_ENABLED: "true"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8081"
+      HTTP_WEBHOOK_SECRET: "${AGENT3_WEBHOOK_SECRET}"
     volumes:
       - ./data/agent3:/data
+    ports:
+      - "127.0.0.1:8083:8081"
     restart: unless-stopped
 
   ironclaw-agent4:
@@ -93,6 +137,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent4
+    command: run --no-onboard
     depends_on:
       postgres:
         condition: service_healthy
@@ -102,8 +147,19 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ironclaw_agent4?sslmode=disable
       NEAR_NETWORK: testnet
       QDRANT_URL: http://qdrant:6333
+      EMBEDDING_PROVIDER: ollama
+      EMBEDDING_MODEL: nomic-embed-text
+      OLLAMA_BASE_URL: http://ollama:11434
+      ONBOARD_COMPLETED: "true"
+      SECRETS_MASTER_KEY: "${AGENT4_SECRETS_MASTER_KEY}"
+      HTTP_ENABLED: "true"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8081"
+      HTTP_WEBHOOK_SECRET: "${AGENT4_WEBHOOK_SECRET}"
     volumes:
       - ./data/agent4:/data
+    ports:
+      - "127.0.0.1:8084:8081"
     restart: unless-stopped
 
   ironclaw-agent5:
@@ -111,6 +167,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent5
+    command: run --no-onboard
     depends_on:
       postgres:
         condition: service_healthy
@@ -120,10 +177,22 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ironclaw_agent5?sslmode=disable
       NEAR_NETWORK: testnet
       QDRANT_URL: http://qdrant:6333
+      EMBEDDING_PROVIDER: ollama
+      EMBEDDING_MODEL: nomic-embed-text
+      OLLAMA_BASE_URL: http://ollama:11434
+      ONBOARD_COMPLETED: "true"
+      SECRETS_MASTER_KEY: "${AGENT5_SECRETS_MASTER_KEY}"
+      HTTP_ENABLED: "true"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8081"
+      HTTP_WEBHOOK_SECRET: "${AGENT5_WEBHOOK_SECRET}"
     volumes:
       - ./data/agent5:/data
+    ports:
+      - "127.0.0.1:8085:8081"
     restart: unless-stopped
 
 volumes:
   postgres_data:
   qdrant_data:
+  ollama_data:
