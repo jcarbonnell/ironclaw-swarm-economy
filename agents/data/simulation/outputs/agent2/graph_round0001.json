@@ -1,0 +1,313 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "host_agent_id": "ironclaw-swarm-agent2.nova-sdk-6.testnet",
+    "round": 1,
+    "timestamp": "2026-06-03T08:27:42.926096+00:00",
+    "n_agents": 8,
+    "n_trade_events": 20
+  },
+  "nodes": [
+    {
+      "id": 0,
+      "strategy_type": "cooperative_trader",
+      "strategy_vector": [
+        0.85,
+        0.4,
+        0.2,
+        0.49,
+        0.5166,
+        0.8197
+      ],
+      "tokens": 103.3221,
+      "reputation": 0.49,
+      "utility": 4.0987,
+      "trades_made": 5
+    },
+    {
+      "id": 1,
+      "strategy_type": "hoarder",
+      "strategy_vector": [
+        0.2,
+        0.2,
+        0.9,
+        0.46,
+        0.5638,
+        1.2972
+      ],
+      "tokens": 112.7539,
+      "reputation": 0.46,
+      "utility": 6.4862,
+      "trades_made": 5
+    },
+    {
+      "id": 2,
+      "strategy_type": "competitive_trader",
+      "strategy_vector": [
+        0.4,
+        0.8,
+        0.7,
+        0.46,
+        0.5359,
+        1.1487
+      ],
+      "tokens": 107.1818,
+      "reputation": 0.46,
+      "utility": 5.7436,
+      "trades_made": 5
+    },
+    {
+      "id": 3,
+      "strategy_type": "rational_actor",
+      "strategy_vector": [
+        0.65,
+        0.5,
+        0.5,
+        0.52,
+        0.5542,
+        2.5127
+      ],
+      "tokens": 110.8349,
+      "reputation": 0.52,
+      "utility": 12.5634,
+      "trades_made": 5
+    },
+    {
+      "id": 4,
+      "strategy_type": "noise_trader",
+      "strategy_vector": [
+        0.5,
+        1.0,
+        0.5,
+        0.46,
+        0.4997,
+        -0.3168
+      ],
+      "tokens": 99.9352,
+      "reputation": 0.46,
+      "utility": -1.5841,
+      "trades_made": 5
+    },
+    {
+      "id": 5,
+      "strategy_type": "opportunist",
+      "strategy_vector": [
+        0.6,
+        0.7,
+        0.6,
+        0.52,
+        0.595,
+        3.0695
+      ],
+      "tokens": 118.9991,
+      "reputation": 0.52,
+      "utility": 15.3475,
+      "trades_made": 5
+    },
+    {
+      "id": 6,
+      "strategy_type": "defector",
+      "strategy_vector": [
+        0.1,
+        0.9,
+        1.0,
+        0.43,
+        0.5414,
+        0.712
+      ],
+      "tokens": 108.2851,
+      "reputation": 0.43,
+      "utility": 3.5601,
+      "trades_made": 5
+    },
+    {
+      "id": 7,
+      "strategy_type": "altruist",
+      "strategy_vector": [
+        0.95,
+        0.3,
+        0.1,
+        0.46,
+        0.489,
+        -0.4358
+      ],
+      "tokens": 97.7931,
+      "reputation": 0.46,
+      "utility": -2.1791,
+      "trades_made": 5
+    }
+  ],
+  "links": [
+    {
+      "source": 6,
+      "target": 7,
+      "weight": 18.544,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 2,
+      "successes": 0,
+      "data_contribution_type": "reputation_update"
+    },
+    {
+      "source": 3,
+      "target": 5,
+      "weight": 22.0692,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 2,
+      "successes": 2,
+      "data_contribution_type": "graph"
+    },
+    {
+      "source": 2,
+      "target": 4,
+      "weight": 8.8623,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 1,
+      "successes": 0,
+      "data_contribution_type": "trading_log"
+    },
+    {
+      "source": 0,
+      "target": 1,
+      "weight": 9.8113,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "reputation_update"
+    },
+    {
+      "source": 0,
+      "target": 2,
+      "weight": 10.849,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 1,
+      "successes": 0,
+      "data_contribution_type": "graph"
+    },
+    {
+      "source": 3,
+      "target": 4,
+      "weight": 10.9092,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "strategy_summary"
+    },
+    {
+      "source": 5,
+      "target": 1,
+      "weight": 7.4357,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "trading_log"
+    },
+    {
+      "source": 5,
+      "target": 7,
+      "weight": 11.3663,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 1,
+      "successes": 0,
+      "data_contribution_type": "graph"
+    },
+    {
+      "source": 0,
+      "target": 3,
+      "weight": 9.6581,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "reputation_update"
+    },
+    {
+      "source": 1,
+      "target": 4,
+      "weight": 21.7394,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 2,
+      "successes": 0,
+      "data_contribution_type": "graph"
+    },
+    {
+      "source": 2,
+      "target": 6,
+      "weight": 6.1623,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 1,
+      "successes": 0,
+      "data_contribution_type": "graph"
+    },
+    {
+      "source": 2,
+      "target": 7,
+      "weight": 9.2436,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "strategy_summary"
+    },
+    {
+      "source": 6,
+      "target": 0,
+      "weight": 11.5405,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 1,
+      "successes": 0,
+      "data_contribution_type": "strategy_summary"
+    },
+    {
+      "source": 2,
+      "target": 5,
+      "weight": 11.2969,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "trading_log"
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "weight": 11.3966,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "interactions": 1,
+      "successes": 0,
+      "data_contribution_type": "trading_log"
+    },
+    {
+      "source": 6,
+      "target": 4,
+      "weight": 9.8209,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "strategy_summary"
+    },
+    {
+      "source": 7,
+      "target": 0,
+      "weight": 9.3682,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "interactions": 1,
+      "successes": 1,
+      "data_contribution_type": "market_signal"
+    }
+  ]
+}

@@ -47,7 +47,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent1
-    command: run --no-onboard
+    command: run --no-onboard --auto-approve
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,10 +66,21 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "8081"
       HTTP_WEBHOOK_SECRET: "${AGENT1_WEBHOOK_SECRET}"
+      NEARAI_MODEL: "${NEARAI_MODEL}"
+      NEARAI_API_KEY: "${NEARAI_API_KEY}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}" 
+      NOVA_ACCOUNT_ID: "${NOVA_ACCOUNT_ID_AGENT_1}" 
+      NOVA_API_KEY: "${NOVA_API_KEY_AGENT_1}" 
+      NOVA_GROUP_ID: "${NOVA_GROUP_ID}"
+      RUST_LOG: "ironclaw=debug"
     volumes:
       - ./data/agent1:/data
+      - ./data/simulation:/data/simulation
+      - ./skills:/home/ironclaw/.ironclaw/skills
+      - ./tools:/home/ironclaw/.ironclaw/tools
     ports:
       - "127.0.0.1:8081:8081"
+      - "127.0.0.1:3001:3000"
     restart: unless-stopped
 
   ironclaw-agent2:
@@ -77,7 +88,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent2
-    command: run --no-onboard
+    command: run --no-onboard --auto-approve
     depends_on:
       postgres:
         condition: service_healthy
@@ -96,8 +107,17 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "8081"
       HTTP_WEBHOOK_SECRET: "${AGENT2_WEBHOOK_SECRET}"
+      NEARAI_MODEL: "${NEARAI_MODEL}"
+      NEARAI_API_KEY: "${NEARAI_API_KEY}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      NOVA_ACCOUNT_ID: "${NOVA_ACCOUNT_ID_AGENT_2}" 
+      NOVA_API_KEY: "${NOVA_API_KEY_AGENT_2}" 
+      NOVA_GROUP_ID: "${NOVA_GROUP_ID}"
     volumes:
       - ./data/agent2:/data
+      - ./data/simulation:/data/simulation
+      - ./skills:/home/ironclaw/.ironclaw/skills
+      - ./tools:/home/ironclaw/.ironclaw/tools
     ports:
       - "127.0.0.1:8082:8081"
     restart: unless-stopped
@@ -107,7 +127,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent3
-    command: run --no-onboard
+    command: run --no-onboard --auto-approve
     depends_on:
       postgres:
         condition: service_healthy
@@ -126,8 +146,17 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "8081"
       HTTP_WEBHOOK_SECRET: "${AGENT3_WEBHOOK_SECRET}"
+      NEARAI_MODEL: "${NEARAI_MODEL}"
+      NEARAI_API_KEY: "${NEARAI_API_KEY}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      NOVA_ACCOUNT_ID: "${NOVA_ACCOUNT_ID_AGENT_3}" 
+      NOVA_API_KEY: "${NOVA_API_KEY_AGENT_3}" 
+      NOVA_GROUP_ID: "${NOVA_GROUP_ID}"
     volumes:
       - ./data/agent3:/data
+      - ./data/simulation:/data/simulation
+      - ./skills:/home/ironclaw/.ironclaw/skills
+      - ./tools:/home/ironclaw/.ironclaw/tools
     ports:
       - "127.0.0.1:8083:8081"
     restart: unless-stopped
@@ -137,7 +166,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent4
-    command: run --no-onboard
+    command: run --no-onboard --auto-approve
     depends_on:
       postgres:
         condition: service_healthy
@@ -156,8 +185,17 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "8081"
       HTTP_WEBHOOK_SECRET: "${AGENT4_WEBHOOK_SECRET}"
+      NEARAI_MODEL: "${NEARAI_MODEL}"
+      NEARAI_API_KEY: "${NEARAI_API_KEY}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      NOVA_ACCOUNT_ID: "${NOVA_ACCOUNT_ID_AGENT_4}" 
+      NOVA_API_KEY: "${NOVA_API_KEY_AGENT_4}" 
+      NOVA_GROUP_ID: "${NOVA_GROUP_ID}"
     volumes:
       - ./data/agent4:/data
+      - ./data/simulation:/data/simulation
+      - ./skills:/home/ironclaw/.ironclaw/skills
+      - ./tools:/home/ironclaw/.ironclaw/tools
     ports:
       - "127.0.0.1:8084:8081"
     restart: unless-stopped
@@ -167,7 +205,7 @@ services:
       context: https://github.com/nearai/ironclaw.git
       dockerfile: Dockerfile
     container_name: ironclaw-agent5
-    command: run --no-onboard
+    command: run --no-onboard --auto-approve
     depends_on:
       postgres:
         condition: service_healthy
@@ -186,8 +224,17 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "8081"
       HTTP_WEBHOOK_SECRET: "${AGENT5_WEBHOOK_SECRET}"
+      NEARAI_MODEL: "${NEARAI_MODEL}"
+      NEARAI_API_KEY: "${NEARAI_API_KEY}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+      NOVA_ACCOUNT_ID: "${NOVA_ACCOUNT_ID_AGENT_5}" 
+      NOVA_API_KEY: "${NOVA_API_KEY_AGENT_5}" 
+      NOVA_GROUP_ID: "${NOVA_GROUP_ID}"
     volumes:
       - ./data/agent5:/data
+      - ./data/simulation:/data/simulation
+      - ./skills:/home/ironclaw/.ironclaw/skills
+      - ./tools:/home/ironclaw/.ironclaw/tools
     ports:
       - "127.0.0.1:8085:8081"
     restart: unless-stopped

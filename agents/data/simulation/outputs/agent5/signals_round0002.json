@@ -1,0 +1,398 @@
+{
+  "schema_version": "1.0",
+  "micro": [
+    {
+      "agent_id": 0,
+      "strategy_type": "noise_trader",
+      "strategy_vector": [
+        0.5,
+        1.0,
+        0.5,
+        0.475,
+        0.5122,
+        0.7241
+      ],
+      "utility_score": 0.0724,
+      "resource_balance": 102.4442,
+      "decision_type": "contribute",
+      "reputation": 0.475,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 1,
+      "strategy_type": "hoarder",
+      "strategy_vector": [
+        0.2,
+        0.2,
+        0.9,
+        0.43,
+        0.5185,
+        0.0
+      ],
+      "utility_score": 0.0,
+      "resource_balance": 103.7028,
+      "decision_type": "contribute",
+      "reputation": 0.43,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 2,
+      "strategy_type": "altruist",
+      "strategy_vector": [
+        0.95,
+        0.3,
+        0.1,
+        0.49,
+        0.5303,
+        0.7898
+      ],
+      "utility_score": 0.079,
+      "resource_balance": 106.063,
+      "decision_type": "contribute",
+      "reputation": 0.49,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 3,
+      "strategy_type": "defector",
+      "strategy_vector": [
+        0.1,
+        0.9,
+        1.0,
+        0.445,
+        0.4867,
+        -0.5588
+      ],
+      "utility_score": 0.0,
+      "resource_balance": 97.3494,
+      "decision_type": "contribute",
+      "reputation": 0.445,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 4,
+      "strategy_type": "opportunist",
+      "strategy_vector": [
+        0.6,
+        0.7,
+        0.6,
+        0.52,
+        0.5566,
+        2.5262
+      ],
+      "utility_score": 0.2526,
+      "resource_balance": 111.3104,
+      "decision_type": "contribute",
+      "reputation": 0.52,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 5,
+      "strategy_type": "competitive_trader",
+      "strategy_vector": [
+        0.4,
+        0.8,
+        0.7,
+        0.445,
+        0.5088,
+        0.0
+      ],
+      "utility_score": 0.0,
+      "resource_balance": 101.7604,
+      "decision_type": "contribute",
+      "reputation": 0.445,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 6,
+      "strategy_type": "rational_actor",
+      "strategy_vector": [
+        0.65,
+        0.5,
+        0.5,
+        0.535,
+        0.5763,
+        3.135
+      ],
+      "utility_score": 0.3135,
+      "resource_balance": 115.2534,
+      "decision_type": "contribute",
+      "reputation": 0.535,
+      "trades_made": 5
+    },
+    {
+      "agent_id": 7,
+      "strategy_type": "cooperative_trader",
+      "strategy_vector": [
+        0.85,
+        0.4,
+        0.2,
+        0.46,
+        0.4878,
+        -0.45
+      ],
+      "utility_score": 0.0,
+      "resource_balance": 97.5685,
+      "decision_type": "contribute",
+      "reputation": 0.46,
+      "trades_made": 5
+    }
+  ],
+  "meso": [
+    {
+      "trade_id": "e08b94a8-4921-415b-b704-810c873aa4f2",
+      "timestamp": "2026-06-03T08:40:52.966453+00:00",
+      "sender_id": "5",
+      "receiver_id": "3",
+      "trade_value": 10.4232,
+      "cooperation_score": 0.0,
+      "trust_delta": -0.05,
+      "success_flag": false,
+      "data_contribution_type": "strategy_summary",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "8bc6dcb5-16a0-4619-92bc-c9997d89e29c",
+      "timestamp": "2026-06-03T08:40:52.966666+00:00",
+      "sender_id": "4",
+      "receiver_id": "2",
+      "trade_value": 8.6382,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "83411b46-f568-4d46-8bbe-ca9dffcf65e0",
+      "timestamp": "2026-06-03T08:40:52.966684+00:00",
+      "sender_id": "1",
+      "receiver_id": "0",
+      "trade_value": 12.5038,
+      "cooperation_score": 0.0,
+      "trust_delta": -0.05,
+      "success_flag": false,
+      "data_contribution_type": "strategy_summary",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "d31de121-b930-43bb-af18-3933a1042be2",
+      "timestamp": "2026-06-03T08:40:52.966693+00:00",
+      "sender_id": "7",
+      "receiver_id": "6",
+      "trade_value": 10.4261,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "graph",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "afea922c-1ae9-43d0-81d8-605f5d6abf36",
+      "timestamp": "2026-06-03T08:40:52.966707+00:00",
+      "sender_id": "6",
+      "receiver_id": "4",
+      "trade_value": 12.0657,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "b4a341b8-21f9-4ca5-aabd-3dd37148ffb1",
+      "timestamp": "2026-06-03T08:40:52.966716+00:00",
+      "sender_id": "2",
+      "receiver_id": "5",
+      "trade_value": 11.6779,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "trading_log",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "636dbf0c-f6c6-4578-aa58-2113ffe12be6",
+      "timestamp": "2026-06-03T08:40:52.966724+00:00",
+      "sender_id": "0",
+      "receiver_id": "7",
+      "trade_value": 8.3662,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "market_signal",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "e6f8bd97-e938-461a-a05b-c67aed1c0f6e",
+      "timestamp": "2026-06-03T08:40:52.966731+00:00",
+      "sender_id": "1",
+      "receiver_id": "3",
+      "trade_value": 7.9056,
+      "cooperation_score": 0.0,
+      "trust_delta": -0.05,
+      "success_flag": false,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "24cac0ac-6baa-4a90-908f-c289e8f4264e",
+      "timestamp": "2026-06-03T08:40:52.966740+00:00",
+      "sender_id": "0",
+      "receiver_id": "5",
+      "trade_value": 10.9646,
+      "cooperation_score": 0.0,
+      "trust_delta": -0.05,
+      "success_flag": false,
+      "data_contribution_type": "strategy_summary",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "85ec8451-3ad9-4856-8d1c-7798171a1b8a",
+      "timestamp": "2026-06-03T08:40:52.966747+00:00",
+      "sender_id": "4",
+      "receiver_id": "2",
+      "trade_value": 9.9617,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "graph",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "3d9de503-c666-4985-8e55-c638a9df420e",
+      "timestamp": "2026-06-03T08:40:52.966754+00:00",
+      "sender_id": "6",
+      "receiver_id": "7",
+      "trade_value": 8.0606,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "trading_log",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "1cfd8783-5f6d-46ee-866e-cc358d71e91a",
+      "timestamp": "2026-06-03T08:40:52.966761+00:00",
+      "sender_id": "3",
+      "receiver_id": "1",
+      "trade_value": 9.3133,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "market_signal",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "097af73e-d234-4bb3-9407-24f765d43939",
+      "timestamp": "2026-06-03T08:40:52.966770+00:00",
+      "sender_id": "7",
+      "receiver_id": "1",
+      "trade_value": 11.6172,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "market_signal",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "9b8d2873-1a91-4a1a-a551-f66156df7285",
+      "timestamp": "2026-06-03T08:40:52.966777+00:00",
+      "sender_id": "4",
+      "receiver_id": "6",
+      "trade_value": 11.0014,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "graph",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "14e838aa-8e66-417d-bb0c-e6165b61cd08",
+      "timestamp": "2026-06-03T08:40:52.966784+00:00",
+      "sender_id": "0",
+      "receiver_id": "2",
+      "trade_value": 9.6551,
+      "cooperation_score": 1.0,
+      "trust_delta": 0.1,
+      "success_flag": true,
+      "data_contribution_type": "trading_log",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "118db25c-2c24-49fa-a34a-028bbd5e92a6",
+      "timestamp": "2026-06-03T08:40:52.966791+00:00",
+      "sender_id": "5",
+      "receiver_id": "3",
+      "trade_value": 9.622,
+      "cooperation_score": 0.0,
+      "trust_delta": -0.05,
+      "success_flag": false,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "3291e6eb-e8ec-4b1d-b278-f8f3abe5dbc8",
+      "timestamp": "2026-06-03T08:40:52.966799+00:00",
+      "sender_id": "0",
+      "receiver_id": "6",
+      "trade_value": 10.6766,
+      "cooperation_score": 0.0,
+      "trust_delta": -0.05,
+      "success_flag": false,
+      "data_contribution_type": "graph",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "3965f39b-2c3f-4978-bab5-e31b43264ff4",
+      "timestamp": "2026-06-03T08:40:52.966806+00:00",
+      "sender_id": "5",
+      "receiver_id": "2",
+      "trade_value": 10.3948,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "6d12dca9-cfee-41d7-b014-677fbe0fd1f1",
+      "timestamp": "2026-06-03T08:40:52.966813+00:00",
+      "sender_id": "4",
+      "receiver_id": "3",
+      "trade_value": 10.2728,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    },
+    {
+      "trade_id": "0c5316fe-48ef-4c25-9f28-baffa899ac05",
+      "timestamp": "2026-06-03T08:40:52.966820+00:00",
+      "sender_id": "1",
+      "receiver_id": "7",
+      "trade_value": 10.5581,
+      "cooperation_score": 0.3,
+      "trust_delta": -0.2,
+      "success_flag": false,
+      "data_contribution_type": "reputation_update",
+      "nova_cid": "PENDING"
+    }
+  ],
+  "macro": {
+    "simulation_round": 2,
+    "timestamp": "2026-06-03T08:40:52.966901+00:00",
+    "host_agent_id": "ironclaw-swarm-agent5.nova-sdk-6.testnet",
+    "n_agents": 8,
+    "n_trade_events": 20,
+    "market_efficiency": 0.35,
+    "cooperation_index": 0.35,
+    "wealth_gini": 0.0312,
+    "strategy_convergence": 0.7239,
+    "value_flow_velocity": 102.0524,
+    "defection_count": 7,
+    "volatility_detected": true,
+    "crisis_detected": false
+  }
+}

@@ -5,4 +5,12 @@ agents/.env
 
 # nova-submit tool binaries (downloaded at setup time)
 nova-submit.wasm
-nova-submit.capabilities.json
+nova-submit.capabilities.json.venv
+
+# Python virtual environment
+.venv
+
+# OS generated files
+.DS_Store
+agents/.DS_Store
+agents/data/.DS_Store
