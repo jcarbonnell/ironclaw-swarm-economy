@@ -1,0 +1,1 @@
+{"timestamp": "2026-06-03T09:54:34.028043+00:00", "model_path": "orchestrator/data/models/oracle_20260603T095433.json", "n_graphs": 3, "metrics": {"market_efficiency": {"mae": 0.136965, "r2": -0.00558}, "cooperation_index": {"mae": 0.123315, "r2": 0.191329}, "wealth_gini": {"mae": 0.005237, "r2": -0.111264}, "strategy_convergence": {"mae": 0.041406, "r2": 0.0}}}

@@ -1,7 +1,8 @@
-# agents secret environment variables
+# secret environment variables
 agents/data/**/.ironclaw/.env
 agents/data/**/config/.env
 agents/.env
+orchestrator/.env
 
 # nova-submit tool binaries (downloaded at setup time)
 nova-submit.wasm
