@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --bg-base:       #0D0F14;
+  --bg-surface:    #141720;
+  --bg-elevated:   #1C2030;
+  --bg-hover:      #222740;
+  --border:        #252A3A;
+  --border-active: #2E354D;
+  --border-focus:  #4F7CFF;
+  --accent:        #4F7CFF;
+  --accent-dim:    #2A3F80;
+  --online:        #00C896;
+  --online-dim:    #004D3A;
+  --degraded:      #FFB020;
+  --degraded-dim:  #4D3500;
+  --offline:       #FF4D6A;
+  --offline-dim:   #4D0015;
+  --text-primary:  #E8EAF0;
+  --text-secondary:#8891AA;
+  --text-muted:    #4A5270;
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans:     'Inter', system-ui, sans-serif;
+  --sidebar-width: 240px;
+  --topbar-height: 48px;
+}
+
+/* Expose our faces to Tailwind's font-* utilities (v4 replaces tailwind.config) */
+@theme inline {
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+}
+
+code, pre, kbd, [data-mono] { font-family: var(--font-mono); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-active); border-radius: 2px; }
+
+@keyframes pulse-online {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
