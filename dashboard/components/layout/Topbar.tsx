@@ -47,6 +47,7 @@ export function Topbar() {
         >
           IRONCLAW
           <span style={{ color: "var(--accent)", marginLeft: 6 }}>FLEET</span>
+          DASHBOARD
         </span>
         <span
           style={{

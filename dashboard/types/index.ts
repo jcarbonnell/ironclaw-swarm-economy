@@ -59,6 +59,26 @@ export interface FleetEvent {
   researcher_id: string;
 }
 
+// ── Agent database types (per-agent Postgres) ──────────────────────────────────
+
+export interface MemoryDocument {
+  id: string;
+  user_id: string;
+  path: string;               // e.g. "swarm/config.md"
+  content: string;
+  created_at: string;         // ISO timestamp
+  updated_at: string;         // ISO timestamp
+  metadata: Record<string, unknown>;
+}
+
+export interface ConversationMessage {
+  id: string;
+  conversation_id: string;
+  role: string;               // "user" | "assistant" | "system" | …
+  content: string;
+  created_at: string;         // ISO timestamp
+}
+
 // ── Session types ──────────────────────────────────────────────────────────────
 
 export interface ResearcherSession {

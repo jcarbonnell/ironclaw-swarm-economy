@@ -43,8 +43,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 import type {
   AgentState,
+  ConversationMessage,
   FleetEvent,
   InfraHealth,
+  MemoryDocument,
   PluginRegistryEntry,
   WebhookResponse,
 } from "@/types";
@@ -62,6 +64,12 @@ export const api = {
       request<{ ok: boolean }>(`/agents/${agentId}/pause`, {
         method: "POST",
       }),
+    memory: (agentId: string) =>
+      request<MemoryDocument[]>(`/agents/${agentId}/memory`),
+    conversations: (agentId: string, limit?: number) =>
+      request<ConversationMessage[]>(
+        `/agents/${agentId}/conversations${limit ? `?limit=${limit}` : ""}`
+      ),
   },
 
   // Fleet-wide controls
