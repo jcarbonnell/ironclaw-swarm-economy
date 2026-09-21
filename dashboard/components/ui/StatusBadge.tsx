@@ -10,6 +10,18 @@ const STATUS_CONFIG: Record <
     dimColor: "var(--online-dim)",
     glow: true,
   },
+  paused: {
+    label: "paused",
+    color: "var(--accent)",
+    dimColor: "var(--accent-dim)",
+    glow: false,
+  },
+  stopped: {
+    label: "stopped",
+    color: "var(--text-muted)",
+    dimColor: "var(--bg-elevated)",
+    glow: false,
+  },
   degraded: {
     label: "degraded",
     color: "var(--degraded)",

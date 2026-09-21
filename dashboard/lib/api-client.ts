@@ -63,7 +63,22 @@ export const api = {
     pause: (agentId: string) =>
       request<{ ok: boolean }>(`/agents/${agentId}/pause`, {
         method: "POST",
+        body: JSON.stringify({ action: "pause" }),
       }),
+    unpause: (agentId: string) =>
+      request<{ ok: boolean }>(`/agents/${agentId}/pause`, {
+        method: "POST",
+        body: JSON.stringify({ action: "unpause" }),
+      }),
+    restart: (agentId: string) =>
+      request<{ ok: boolean }>(`/agents/${agentId}/pause`, {
+        method: "POST",
+        body: JSON.stringify({ action: "restart" }),
+      }),
+    logs: (agentId: string, tail?: number) =>
+      request<{ logs: string }>(
+        `/agents/${agentId}/logs${tail ? `?tail=${tail}` : ""}`
+      ),
     memory: (agentId: string) =>
       request<MemoryDocument[]>(`/agents/${agentId}/memory`),
     conversations: (agentId: string, limit?: number) =>
@@ -75,11 +90,11 @@ export const api = {
   // Fleet-wide controls
   fleet: {
     pause: () =>
-      request<{ ok: boolean; affected: number }>("/fleet/pause", {
+      request<{ ok: boolean; affected: number; failed: string[] }>("/fleet/pause", {
         method: "POST",
       }),
     resume: () =>
-      request<{ ok: boolean; affected: number }>("/fleet/resume", {
+      request<{ ok: boolean; affected: number; failed: string[] }>("/fleet/resume", {
         method: "POST",
       }),
   },

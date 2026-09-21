@@ -1,6 +1,11 @@
 // ── Agent types ────────────────────────────────────────────────────────────────
 
-export type AgentStatus = "healthy" | "degraded" | "unreachable";
+export type AgentStatus =
+  | "healthy"      // container running + /health responds
+  | "unreachable"  // container running but /health failed (crashed, hung, booting)
+  | "paused"       // container paused via docker pause
+  | "stopped"      // container exited or missing
+  | "degraded";    // reserved: reachable but erroring (set from event log later)
 
 export interface AgentConfig {
   id: string;           // "agent1" .. "agent5"
