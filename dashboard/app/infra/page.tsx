@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 
 const INFRA_ITEMS = [
-  { label: "Postgres", key: "postgres" as const },
+  { label: "Postgres  :5433", key: "postgres" as const },
   { label: "Qdrant  :6333", key: "qdrant" as const },
   { label: "Ollama  :11434", key: "ollama" as const },
 ];
@@ -18,16 +18,19 @@ export default function InfraPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <h1 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-primary)", margin: "0 0 16px" }}>
+      <h1 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-primary)", margin: "0 0 4px" }}>
         Infrastructure
       </h1>
+      <p style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 20 }}>
+        Shared services · polling every 10s
+      </p>
 
       {isLoading ? (
         <p style={{ color: "var(--text-muted)", fontSize: 12, fontFamily: "var(--font-mono)" }}>
           Checking…
         </p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 340 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 360 }}>
           {INFRA_ITEMS.map(({ label, key }) => {
             const up = data?.[key] ?? false;
             return (
@@ -47,13 +50,7 @@ export default function InfraPage() {
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-secondary)" }}>
                   {label}
                 </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 11,
-                    color: up ? "var(--online)" : "var(--offline)",
-                  }}
-                >
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: up ? "var(--online)" : "var(--offline)" }}>
                   {up ? "● reachable" : "● unreachable"}
                 </span>
               </div>
@@ -63,7 +60,7 @@ export default function InfraPage() {
       )}
 
       <p style={{ marginTop: 20, fontSize: 11, color: "var(--text-muted)" }}>
-        Polling every 10s. Agent webhook health is shown on the Fleet view.
+        Agent webhook health is shown on the Fleet view. Postgres check queries the dashboard database.
       </p>
     </div>
   );

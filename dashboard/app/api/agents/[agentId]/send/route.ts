@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAgentConfigs, getAgentWebhookSecret } from "@/lib/agents";
+import { getAgentConfigs, getAgentWebhookSecret, getResearcherId } from "@/lib/agents";
 import { sendWebhook, WebhookError } from "@/lib/webhook";
+import { logEventSafe } from "@/lib/events";
 import type { WebhookResponse } from "@/types";
 
 export async function POST(
@@ -32,6 +33,12 @@ export async function POST(
     const result = await sendWebhook(config.url, secret, {
       user_id: "default",
       content,
+    });
+    await logEventSafe({
+      kind: "skill_invoked",
+      researcherId: getResearcherId(),
+      agent: config.id,
+      payload: { content, message_id: result.message_id },
     });
     return NextResponse.json(result);
   } catch (err) {

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { pingDashboardDb } from "@/lib/events";
 import type { InfraHealth } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -24,11 +25,11 @@ async function checkOllama(): Promise<boolean> {
 }
 
 export async function GET(): Promise<NextResponse<InfraHealth>> {
-  const [qdrant, ollama] = await Promise.all([checkQdrant(), checkOllama()]);
+  const [postgres, qdrant, ollama] = await Promise.all([
+    pingDashboardDb(),
+    checkQdrant(),
+    checkOllama(),
+  ]);
 
-  return NextResponse.json({
-    postgres: true, // Checked implicitly when event log works; no direct ping for v0.1
-    qdrant,
-    ollama,
-  });
+  return NextResponse.json({ postgres, qdrant, ollama });
 }

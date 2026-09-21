@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAgentConfigs } from "@/lib/agents";
+import { getAgentConfigs, getResearcherId } from "@/lib/agents";
 import { agentAction, type DockerAction } from "@/lib/docker";
+import { logEventSafe } from "@/lib/events";
 
 const VALID_ACTIONS: DockerAction[] = ["pause", "unpause", "restart"];
 
@@ -27,6 +28,12 @@ export async function POST(
 
   try {
     await agentAction(config.index, action);
+    await logEventSafe({
+      kind: "intervention",
+      researcherId: getResearcherId(),
+      agent: config.id,
+      payload: { action },
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json(
