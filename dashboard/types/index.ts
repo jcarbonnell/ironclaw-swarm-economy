@@ -102,20 +102,56 @@ export interface PluginDependencies {
   plugins?: string[];
 }
 
+// A role the plugin's fleet template expects. This is what makes a plugin a
+// *template* (a fleet shape) rather than just a UI skin — e.g. the "ecommerce
+// platform management" template declares manager/accountant/CS/delivery roles.
+// Slice 6 only displays these; instantiation from them is future work.
+export interface FleetRole {
+  role: string;            // "manager" | "delivery" | "trader" | …
+  count: number | string;  // exact (4) or a range hint ("1", "30", "8-16")
+  description?: string;    // agent-legible: what this role does in the fleet
+}
+
+// Declares which parts of the plugin a tenant is expected to customize when
+// they instantiate it (agent personalities, a database connection, branding).
+// Slice 6 only displays these so a human — or a customer's own agent — can see
+// what would need personalizing. No personalization logic is built yet.
+export interface PersonalizationPoint {
+  key: string;                          // "agent_personalities" | "customer_db" | …
+  label: string;                        // human/agent-readable name
+  kind: "text" | "connection" | "prompt" | "dataset" | "branding" | "other";
+  description?: string;                 // what to provide, in agent-legible prose
+  required?: boolean;
+}
+
 export interface PluginManifest {
   name: string;
   version: string;
   display_name: string;
+
+  // Agent-legible: rich enough for an LLM to reason "does this match the user's
+  // setup?" — a paragraph, not a tagline. This is the field a customer's agent
+  // reads when deciding whether to fetch and adapt the template.
   description: string;
+
   author: string;
   dependencies: PluginDependencies;
+
+  // ── Template-shaped fields (optional; a plain UI plugin may omit them) ──
+  // Present when the plugin describes a fleet configuration, not just panels.
+  fleet_shape?: FleetRole[];
+  personalization?: PersonalizationPoint[];
+
+  // Free-form tags for future marketplace filtering ("research", "ecommerce",
+  // "logistics", "finance"). Display-only in Slice 6.
+  tags?: string[];
 }
 
 export interface PluginRegistryEntry {
   manifest: PluginManifest;
   status: PluginStatus;
   loadedAt: string | null;
-  error: string | null;
+  error: string | null;         // set when a manifest.json failed to parse/validate
   manifestPath: string;
 }
 

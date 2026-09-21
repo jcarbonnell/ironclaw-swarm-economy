@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server";
+import { discoverPlugins } from "@/lib/plugins";
 import type { PluginRegistryEntry } from "@/types";
 
-// Slice 1 stub — discovers plugins from filesystem in Slice 6.
-export async function GET(): Promise<NextResponse<PluginRegistryEntry[]>> {
-  return NextResponse.json([]);
+export const dynamic = "force-dynamic";
+
+export async function GET(): Promise <
+  NextResponse<PluginRegistryEntry[] | { error: string }>
+> {
+  try {
+    const plugins = await discoverPlugins();
+    return NextResponse.json(plugins);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Failed to discover plugins" },
+      { status: 502 }
+    );
+  }
 }

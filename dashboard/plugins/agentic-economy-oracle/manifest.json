@@ -1,0 +1,37 @@
+{
+  "name": "agentic-economy-oracle",
+  "version": "0.1.0",
+  "display_name": "Agentic Economy Oracle",
+  "description": "A privacy-preserving agentic economy testbed. A fleet of IronClaw agents each run a local MESA + NetworkX market simulation, contribute their encrypted interaction graphs to a shared NOVA group, and a central coordinator trains a GraphSAGE oracle on the aggregated graphs to learn system-level economic dynamics (market efficiency, cooperation, wealth inequality) without ever seeing any agent's raw data. Use this plugin when running the agentic economy oracle research experiment: it surfaces the MESA simulation internals, macro-signal time series, NOVA contribution flow, and oracle training state.",
+  "author": "jcarbonnell",
+  "tags": ["research", "economics", "privacy", "federated-learning", "nova"],
+  "dependencies": {
+    "ironclaw_skills": ["nova-economy-contributor"],
+    "qdrant_collections": ["agent_signals", "swarm_signals"],
+    "nova_group": "ironclaw-swarm-economy",
+    "plugins": []
+  },
+  "fleet_shape": [
+    {
+      "role": "economy_agent",
+      "count": "5",
+      "description": "An IronClaw agent that runs a local MESA market simulation each round, encrypts the resulting interaction graph, and contributes it to the shared NOVA swarm group via the nova-economy-contributor skill. Homogeneous fleet: every agent plays the same role but produces independent simulation outcomes."
+    }
+  ],
+  "personalization": [
+    {
+      "key": "n_traders",
+      "label": "Traders per simulation",
+      "kind": "other",
+      "description": "How many trading agents run inside each agent's local MESA model per round (default 8).",
+      "required": false
+    },
+    {
+      "key": "strategy_distribution",
+      "label": "Strategy mix",
+      "kind": "other",
+      "description": "The distribution of trading strategies (cooperative, defector, hoarder, etc.) assigned across the MESA traders. Shapes the economic dynamics the oracle learns from.",
+      "required": false
+    }
+  ]
+}
