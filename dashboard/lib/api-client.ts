@@ -49,6 +49,7 @@ import type {
   MacroSignalPoint,
   MemoryDocument,
   NovaContributionsResponse,
+  OracleTrainingResponse,
   PluginRegistryEntry,
   PrepareRetrieveResult,
   WebhookResponse,
@@ -153,6 +154,13 @@ export const api = {
             method: "POST",
             body: JSON.stringify({ ipfs_hash: ipfsHash }),
           }
+        ),
+
+      // The orchestrator's training outputs (current model + run history),
+      // read from disk by the server route.
+      oracleTraining: () =>
+        request<OracleTrainingResponse>(
+          "/plugins/agentic-economy-oracle/oracle-training"
         ),
     },
   },

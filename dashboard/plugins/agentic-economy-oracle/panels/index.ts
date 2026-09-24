@@ -16,6 +16,7 @@
 import type { ComponentType } from "react";
 import { MacroSignalsPanel } from "./MacroSignalsPanel";
 import { NovaContributionsPanel } from "./NovaContributionsPanel";
+import { OracleTrainingPanel } from "./OracleTrainingPanel";
 
 // A panel component takes no required props for now — each panel fetches its own
 // data via api-client, keyed by the plugin. If panels later need context (the
@@ -26,4 +27,5 @@ export type PanelComponent = ComponentType;
 export const panelRegistry: Record<string, PanelComponent> = {
   "macro-signals": MacroSignalsPanel,
   "nova-contributions": NovaContributionsPanel,
+  "oracle-training": OracleTrainingPanel,
 };

@@ -254,6 +254,63 @@ export type VerifyState =
   | { status: "verified"; match: boolean; recomputed: string }
   | { status: "error"; message: string };
 
+// ── Oracle training (agentic-economy-oracle panel) ───────────────────────────
+// Shapes of the orchestrator's training outputs, read by the oracle-training
+// route from disk (oracle_latest.json + training_log.jsonl). Field names match
+// train_oracle.py's output exactly — this is the contract between the Python
+// trainer and the TypeScript panel.
+
+// Per-target evaluation metrics (one entry per macro signal the oracle predicts).
+export interface OracleTargetMetrics {
+  mae: number;
+  r2: number;
+}
+
+// One graph in the training set (provenance for the current model).
+export interface OracleTrainingGraph {
+  file: string;
+  agent_id: string;
+  round: number;
+  n_nodes: number;
+  n_links: number;
+}
+
+// oracle_latest.json — the current model artifact. We type the fields the panel
+// reads; weights/bias are included for completeness but the panel doesn't render
+// the raw matrices.
+export interface OracleModel {
+  schema_version: string;
+  trained_at: string;
+  architecture: string;
+  input_dim: number;
+  output_dim: number;
+  input_labels: string[];
+  output_labels: string[];
+  n_training_graphs: number;
+  training_graphs: OracleTrainingGraph[];
+  weights: number[][];
+  bias: number[];
+  final_loss: number;
+  loss_history: number[];
+  eval_metrics: Record<string, OracleTargetMetrics>;
+  upgrade_path?: string;
+}
+
+// One line of training_log.jsonl — a past training run.
+export interface OracleTrainingRun {
+  timestamp: string;
+  model_path: string;
+  n_graphs: number;
+  metrics: Record<string, OracleTargetMetrics>;
+}
+
+// The oracle-training route's response: current model (null if never trained)
+// plus the full run history (newest first).
+export interface OracleTrainingResponse {
+  latest: OracleModel | null;
+  history: OracleTrainingRun[];
+}
+
 // ── Infrastructure health ─────────────────────────────────────────────────────
 
 export interface InfraHealth {
