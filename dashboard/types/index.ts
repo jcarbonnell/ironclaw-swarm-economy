@@ -311,6 +311,42 @@ export interface OracleTrainingResponse {
   history: OracleTrainingRun[];
 }
 
+// ── Per-agent economy signals (agent detail section) ─────────────────────────
+// Shaped by the agent-signals route from the agent_signals Qdrant collection,
+// for the agentic-economy-oracle plugin's detail-page section. Numbers are
+// number | null: null ⇒ the signal was absent (render "—", not 0).
+
+// The agent's latest micro state (most recent simulation round).
+export interface AgentLatestSignal {
+  strategy_type: string | null;
+  utility_score: number | null;
+  resource_balance: number | null;
+  reputation: number | null;
+  trades_made: number | null;
+  decision_type: string | null;
+  simulation_round: number | null;
+}
+
+// One recent trade (meso point) associated with this agent.
+export interface AgentTradeSignal {
+  sender_id: string;
+  receiver_id: string;
+  trade_value: number | null;
+  cooperation_score: number | null;
+  trust_delta: number | null;
+  success_flag: boolean;
+  simulation_round: number | null;
+}
+
+// The agent-signals route's response.
+export interface AgentEconomySignals {
+  agent_id: string; // short id (agent1)
+  near_account: string; // full NEAR account
+  latest: AgentLatestSignal | null; // null ⇒ no signals yet
+  recent_trades: AgentTradeSignal[];
+  rounds_seen: number; // how many micro points exist for this agent
+}
+
 // ── Infrastructure health ─────────────────────────────────────────────────────
 
 export interface InfraHealth {

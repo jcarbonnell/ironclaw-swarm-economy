@@ -51,6 +51,9 @@
     "sidebar_slots": [
       "betaweb-stage-indicator",
       "sandbox-class-banner"
+    ],
+    "agent_detail_sections": [
+      "agent-economy-signals"
     ]
   }
 }

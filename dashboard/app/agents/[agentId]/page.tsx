@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { MessageLog, type LogColumn } from "@/components/ui/MessageLog";
 import { CopyValue } from "@/components/ui/CopyValue";
+import { resolveDetailSection } from "@/lib/plugin-panels";
 import { formatTimestamp, formatRelativeTime } from "@/lib/utils";
 import type { MemoryDocument, ConversationMessage } from "@/types";
 
@@ -25,6 +26,13 @@ export default function AgentDetailPage({
   const convQuery = useQuery({
     queryKey: ["conversations", agentId],
     queryFn: () => api.agents.conversations(agentId),
+  });
+
+  // Active plugins that declare agent_detail_sections — the base renders their
+  // sections generically via the bundle resolver (no hardcoded plugin knowledge).
+  const pluginsQuery = useQuery({
+    queryKey: ["plugins"],
+    queryFn: () => api.plugins.list(),
   });
 
   // ── Memory columns ──────────────────────────────────────────────────────────
@@ -193,8 +201,54 @@ export default function AgentDetailPage({
           />
         )}
       </Section>
+
+      {/* Plugin-contributed detail sections (agent_detail_sections extension) */}
+      {(pluginsQuery.data ?? [])
+        .filter((entry) => entry.status !== "errored")
+        .flatMap((entry) => {
+          const sectionIds = entry.manifest.ui_extensions?.agent_detail_sections ?? [];
+          return sectionIds.map((sectionId) => ({
+            pluginName: entry.manifest.name,
+            pluginDisplay: entry.manifest.display_name,
+            sectionId,
+          }));
+        })
+        .map(({ pluginName, pluginDisplay, sectionId }) => {
+          const Component = resolveDetailSection(pluginName, sectionId);
+          return (
+            <Section
+              key={`${pluginName}:${sectionId}`}
+              title={sectionLabel(sectionId)}
+              subtitle={pluginDisplay}
+            >
+              {Component ? (
+                <Component agentId={agentId} />
+              ) : (
+                <div
+                  style={{
+                    border: "1px dashed var(--border)",
+                    borderRadius: 6,
+                    padding: 16,
+                    fontSize: 12,
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  Not built yet. Declared in the manifest; no component registered.
+                </div>
+              )}
+            </Section>
+          );
+        })}
     </div>
   );
+}
+
+// Turn a section id ("agent-economy-signals") into a display label.
+function sectionLabel(id: string): string {
+  return id
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
 
 // ── Local helpers ───────────────────────────────────────────────────────────

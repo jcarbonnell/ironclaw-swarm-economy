@@ -42,6 +42,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 // ── Typed API surface ──────────────────────────────────────────────────────────
 
 import type {
+  AgentEconomySignals,
   AgentState,
   ConversationMessage,
   FleetEvent,
@@ -161,6 +162,13 @@ export const api = {
       oracleTraining: () =>
         request<OracleTrainingResponse>(
           "/plugins/agentic-economy-oracle/oracle-training"
+        ),
+
+      // Per-agent economy signals (latest micro state + recent trades) for the
+      // agent detail-page section. Keyed by short agent id (agent1).
+      agentSignals: (agentId: string) =>
+        request<AgentEconomySignals>(
+          `/plugins/agentic-economy-oracle/agent-signals/${agentId}`
         ),
     },
   },

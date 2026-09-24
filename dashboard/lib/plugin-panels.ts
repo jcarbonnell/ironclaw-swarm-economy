@@ -23,10 +23,21 @@
 
 import type { PanelComponent } from "@/plugins/agentic-economy-oracle/panels";
 import { panelRegistry as agenticEconomyOracle } from "@/plugins/agentic-economy-oracle/panels";
+import type { DetailSectionComponent } from "@/plugins/agentic-economy-oracle/sections";
+import { detailSectionRegistry as agenticEconomyOracleSections } from "@/plugins/agentic-economy-oracle/sections";
+export type { DetailSectionComponent };
 
 // plugin name (manifest.name) → that plugin's own panel registry
 const bundleRegistries: Record<string, Record<string, PanelComponent>> = {
   "agentic-economy-oracle": agenticEconomyOracle,
+};
+
+// plugin name (manifest.name) → that plugin's own detail-section registry
+const bundleSectionRegistries: Record <
+  string,
+  Record<string, DetailSectionComponent>
+> = {
+  "agentic-economy-oracle": agenticEconomyOracleSections,
 };
 
 // Resolve a single panel component for a plugin, or null if the plugin hasn't
@@ -39,4 +50,17 @@ export function resolvePanel(
   const registry = bundleRegistries[pluginName];
   if (!registry) return null;
   return registry[panelId] ?? null;
+}
+
+// Resolve a single detail-section component for a plugin, or null if the plugin
+// hasn't built that section yet (→ the detail page renders a "not built yet"
+// placeholder). Same seam as resolvePanel: base knows WHERE each bundle's
+// section registry is, not WHAT sections it contains.
+export function resolveDetailSection(
+  pluginName: string,
+  sectionId: string
+): DetailSectionComponent | null {
+  const registry = bundleSectionRegistries[pluginName];
+  if (!registry) return null;
+  return registry[sectionId] ?? null;
 }
