@@ -149,6 +149,11 @@ export interface PluginManifest {
   // Where the plugin injects UI. Optional — a headless plugin may declare none.
   // The panel host reads ui_extensions.top_level_panels to build its tabs.
   ui_extensions?: UiExtensions;
+
+  // Relative path (within the plugin bundle) to the plugin's JSON Schema of
+  // parameters. Discovery loads the referenced file into the registry entry's
+  // parameterSchema field.
+  parameter_schema?: string;
 }
 
 // ── UI extension points (manifest ui_extensions block) ───────────────────────
@@ -166,12 +171,37 @@ export interface UiExtensions {
   sidebar_slots?: string[];
 }
 
+// A single declared parameter, as read from the plugin's parameters.schema.json.
+// This is the subset of JSON Schema fields the read-only registry display uses.
+export interface PluginParameterSpec {
+  type?: string;
+  default?: unknown;
+  description?: string;
+  minimum?: number;
+  maximum?: number;
+  enum?: unknown[];
+  ui_widget?: string;
+  items?: { type?: string; enum?: unknown[] };
+}
+
+// The parsed parameters.schema.json (JSON Schema object). We type the fields the
+// registry reads; unknown fields pass through untyped.
+export interface PluginParameterSchema {
+  title?: string;
+  description?: string;
+  properties?: Record<string, PluginParameterSpec>;
+  required?: string[];
+}
+
 export interface PluginRegistryEntry {
   manifest: PluginManifest;
   status: PluginStatus;
   loadedAt: string | null;
   error: string | null;         // set when a manifest.json failed to parse/validate
   manifestPath: string;
+  // Parsed parameter schema (null if the plugin declares none, or the file
+  // couldn't be loaded). Populated at discovery so the card renders it directly.
+  parameterSchema: PluginParameterSchema | null;
 }
 
 // ── Plugin: agentic-economy-oracle ───────────────────────────────────────────

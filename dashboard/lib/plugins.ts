@@ -57,6 +57,8 @@ function validateManifest(raw: unknown, source: string): PluginManifest {
       typeof m.ui_extensions === "object" && m.ui_extensions !== null
         ? (m.ui_extensions as PluginManifest["ui_extensions"])
         : undefined,
+    parameter_schema:
+      typeof m.parameter_schema === "string" ? m.parameter_schema : undefined,
   };
 }
 
@@ -90,12 +92,32 @@ export async function discoverPlugins(): Promise<PluginRegistryEntry[]> {
       const parsed = JSON.parse(rawText);
       const manifest = validateManifest(parsed, `${name}/manifest.json`);
 
+      // If the manifest declares a parameter_schema, load that file from the
+      // plugin's folder and attach its parsed contents. Discovery is the single
+      // place that loads everything a plugin declares — the card renders the
+      // schema without a separate fetch. A missing/broken schema file is a
+      // non-fatal warning: the plugin still appears, just without parameters.
+      let parameterSchema: PluginRegistryEntry["parameterSchema"] = null;
+      if (manifest.parameter_schema) {
+        const schemaPath = join(pluginPath, manifest.parameter_schema);
+        try {
+          const schemaText = await readFile(schemaPath, "utf-8");
+          parameterSchema = JSON.parse(schemaText);
+        } catch (schemaErr) {
+          console.warn(
+            `[plugins] ${name}: parameter_schema declared but not loadable:`,
+            schemaErr instanceof Error ? schemaErr.message : schemaErr
+          );
+        }
+      }
+
       entries.push({
         manifest,
         status: "discovered",   // read-only slice: discovered, not loaded
         loadedAt: null,
         error: null,
         manifestPath: `plugins/${name}/manifest.json`,
+        parameterSchema,
       });
     } catch (err) {
       // A folder with a broken/missing manifest still appears in the registry,
@@ -114,6 +136,7 @@ export async function discoverPlugins(): Promise<PluginRegistryEntry[]> {
         loadedAt: null,
         error: err instanceof Error ? err.message : "Unknown manifest error",
         manifestPath: `plugins/${name}/manifest.json`,
+        parameterSchema: null,
       });
     }
   }

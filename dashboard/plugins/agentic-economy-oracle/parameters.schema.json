@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Agentic Economy Oracle parameters",
+  "description": "Parameters this plugin exposes for a simulation run. Read-only in the registry (declared defaults). Interactive personalization arrives with the marketplace.",
+  "properties": {
+    "n_rounds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 20,
+      "ui_widget": "slider",
+      "description": "Number of MESA rounds per simulation run."
+    },
+    "n_traders": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 100,
+      "default": 8,
+      "ui_widget": "number",
+      "description": "Trading agents per round inside each agent's local MESA model."
+    },
+    "strategy_distribution": {
+      "type": "object",
+      "default": {
+        "cooperative_trader": 0.2,
+        "defector": 0.1,
+        "hoarder": 0.1,
+        "aggressive_seller": 0.15,
+        "cautious_buyer": 0.15,
+        "opportunist": 0.1,
+        "moralist": 0.1,
+        "random": 0.1
+      },
+      "ui_widget": "distribution_editor",
+      "description": "Distribution of trading strategies assigned across the traders. Shapes the economic dynamics the oracle learns from."
+    },
+    "oracle_target_signals": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "market_efficiency",
+          "cooperation_index",
+          "wealth_gini",
+          "strategy_convergence",
+          "value_flow_velocity"
+        ]
+      },
+      "default": [
+        "market_efficiency",
+        "cooperation_index",
+        "wealth_gini",
+        "strategy_convergence"
+      ],
+      "ui_widget": "checkbox_group",
+      "description": "Macro signals the oracle attempts to predict."
+    },
+    "oracle_min_training_graphs": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 5,
+      "ui_widget": "number",
+      "description": "Minimum graphs accumulated before a training run is allowed."
+    }
+  },
+  "required": ["n_rounds", "n_traders", "strategy_distribution"]
+}

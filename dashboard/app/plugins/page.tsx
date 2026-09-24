@@ -191,10 +191,67 @@ function PluginCard({ entry }: { entry: PluginRegistryEntry }) {
               <DepLine label="plugins" values={manifest.dependencies.plugins} />
             </div>
           </Section>
+
+          {/* Parameters (declared; read-only — interactive personalization is a
+              later marketplace feature at /plugins/[pluginId]) */}
+          {entry.parameterSchema?.properties &&
+            Object.keys(entry.parameterSchema.properties).length > 0 && (
+              <Section label="PARAMETERS">
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {Object.entries(entry.parameterSchema.properties).map(
+                    ([key, spec]) => (
+                      <div
+                        key={key}
+                        style={{ borderLeft: "2px solid var(--border-active)", paddingLeft: 10 }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-primary)" }}>
+                            {key}
+                          </span>
+                          <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-muted)", background: "var(--bg-elevated)", border: "1px solid var(--border)", padding: "1px 5px", borderRadius: 2 }}>
+                            {paramType(spec)}
+                          </span>
+                          {entry.parameterSchema?.required?.includes(key) && (
+                            <span style={{ fontSize: 9, color: "var(--degraded)", fontFamily: "var(--font-mono)" }}>
+                              required
+                            </span>
+                          )}
+                          {spec.default !== undefined && (
+                            <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}>
+                              default: {formatDefault(spec.default)}
+                            </span>
+                          )}
+                        </div>
+                        {spec.description && (
+                          <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2, lineHeight: 1.5 }}>
+                            {spec.description}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  )}
+                </div>
+              </Section>
+            )}
         </div>
       )}
     </div>
   );
+}
+
+// Render a parameter's type compactly (arrays show their item type).
+function paramType(spec: { type?: string; items?: { type?: string } }): string {
+  if (spec.type === "array" && spec.items?.type) return `${spec.items.type}[]`;
+  return spec.type ?? "any";
+}
+
+// Compact one-line rendering of a default value (objects/arrays summarized).
+function formatDefault(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.length} items]`;
+  if (value !== null && typeof value === "object") {
+    return `{${Object.keys(value).length} keys}`;
+  }
+  return String(value);
 }
 
 function Section({ label, children }: { label: string; children: React.ReactNode }) {

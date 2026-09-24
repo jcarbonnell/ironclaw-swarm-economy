@@ -55,5 +55,6 @@
     "agent_detail_sections": [
       "agent-economy-signals"
     ]
-  }
+  },
+  "parameter_schema": "parameters.schema.json"
 }
