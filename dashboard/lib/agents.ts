@@ -9,7 +9,7 @@ export function getAgentConfigs(): AgentConfig[] {
     url: process.env[`AGENT${i}_URL`] ?? `http://localhost:${8080 + i}`,
     nearAccount:
       process.env[`AGENT${i}_NEAR_ACCOUNT`] ??
-      `ironclaw-swarm-agent${i}.nova-sdk-6.testnet`,
+      `ironclaw-swarm-agent${i}.nova-sdk-7.testnet`,
     port: 8080 + i,
   }));
 }

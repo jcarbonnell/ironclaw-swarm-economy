@@ -46,8 +46,11 @@ import type {
   ConversationMessage,
   FleetEvent,
   InfraHealth,
+  MacroSignalPoint,
   MemoryDocument,
+  NovaContributionsResponse,
   PluginRegistryEntry,
+  PrepareRetrieveResult,
   WebhookResponse,
 } from "@/types";
 
@@ -124,6 +127,34 @@ export const api = {
   // Plugin registry
   plugins: {
     list: () => request<PluginRegistryEntry[]>("/plugins"),
+
+    // Panel data for the agentic-economy-oracle plugin. Namespaced by the
+    // plugin's manifest `name` so the route path, the marketplace key, and this
+    // client method all agree. As more panels land (NOVA contributions, oracle
+    // training), they extend this same namespace.
+    agenticEconomyOracle: {
+      macroSignals: () =>
+        request<MacroSignalPoint[]>(
+          "/plugins/agentic-economy-oracle/macro-signals"
+        ),
+
+      // List the swarm group's NOVA contributions (server brokers the API key).
+      novaContributions: () =>
+        request<NovaContributionsResponse>(
+          "/plugins/agentic-economy-oracle/nova-contributions"
+        ),
+
+      // Broker the key + ciphertext + format for one contribution, so the
+      // browser can decrypt + verify it. Server never sees plaintext.
+      prepareRetrieve: (ipfsHash: string) =>
+        request<PrepareRetrieveResult>(
+          "/plugins/agentic-economy-oracle/nova-contributions/prepare-retrieve",
+          {
+            method: "POST",
+            body: JSON.stringify({ ipfs_hash: ipfsHash }),
+          }
+        ),
+    },
   },
 
   // Infrastructure health

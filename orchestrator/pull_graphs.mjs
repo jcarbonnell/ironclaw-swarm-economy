@@ -22,7 +22,7 @@ config({ path: resolve('orchestrator/.env') });
 
 // ── Config (read after dotenv) ────────────────────────────────────────────────
 
-const ACCOUNT_ID = process.env.NOVA_ACCOUNT_ID || 'ironclaw-swarm.nova-sdk-6.testnet';
+const ACCOUNT_ID = process.env.NOVA_ACCOUNT_ID || 'ironclaw-swarm.nova-sdk-7.testnet';
 const API_KEY    = process.env.NOVA_API_KEY;
 const GROUP_ID   = process.env.NOVA_GROUP_ID   || 'ironclaw-swarm-economy';
 
@@ -93,7 +93,7 @@ async function main() {
   const sdk = new NovaSdk(ACCOUNT_ID, {
     apiKey:     API_KEY,
     rpcUrl:     'https://rpc.testnet.near.org',
-    contractId: 'nova-sdk-6.testnet',
+    contractId: 'nova-sdk-7.testnet',
   });
 
   console.log(`   Account:  ${ACCOUNT_ID}`);

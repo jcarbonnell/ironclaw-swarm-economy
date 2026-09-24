@@ -11,7 +11,7 @@ export interface AgentConfig {
   id: string;           // "agent1" .. "agent5"
   index: number;        // 1 .. 5
   url: string;          // "http://localhost:8081"
-  nearAccount: string;  // "ironclaw-swarm-agent1.nova-sdk-6.testnet"
+  nearAccount: string;  // "ironclaw-swarm-agent1.nova-sdk-7.testnet"
   port: number;         // 8081 .. 8085
 }
 
@@ -145,6 +145,25 @@ export interface PluginManifest {
   // Free-form tags for future marketplace filtering ("research", "ecommerce",
   // "logistics", "finance"). Display-only in Slice 6.
   tags?: string[];
+
+  // Where the plugin injects UI. Optional — a headless plugin may declare none.
+  // The panel host reads ui_extensions.top_level_panels to build its tabs.
+  ui_extensions?: UiExtensions;
+}
+
+// ── UI extension points (manifest ui_extensions block) ───────────────────────
+// Declares where a plugin injects UI into the base layout. These are the four
+// extension points from the fleet spec §4.3. Each is a list of string IDs; the
+// plugin's own panel registry (plugins/<name>/panels/index.ts) resolves an ID
+// to a React component. The base renders a tab/slot per declared ID and shows a
+// "not built yet" placeholder for any ID the plugin hasn't registered a
+// component for — so the manifest is the full statement of intent, and the
+// registry is the built subset.
+export interface UiExtensions {
+  top_level_panels?: string[];
+  agent_card_fields?: string[];
+  agent_detail_sections?: string[];
+  sidebar_slots?: string[];
 }
 
 export interface PluginRegistryEntry {
@@ -154,6 +173,86 @@ export interface PluginRegistryEntry {
   error: string | null;         // set when a manifest.json failed to parse/validate
   manifestPath: string;
 }
+
+// ── Plugin: agentic-economy-oracle ───────────────────────────────────────────
+// Types owned by the Swarm Economy plugin's panels. Kept here in the shared
+// types module (single source of truth) so the API route, api-client, and panel
+// component share one contract. When plugins become independently packaged
+// (v1.0), these move into the plugin's own types module.
+ 
+// One simulation round's macro signals, as read from the swarm_signals Qdrant
+// collection and shaped by the macro-signals route. Metrics are number | null:
+// null means the signal was absent for that round (render a gap, not a zero).
+export interface MacroSignalPoint {
+  round: number;
+  market_efficiency: number | null;
+  cooperation_index: number | null;
+  wealth_gini: number | null;
+  strategy_convergence: number | null;
+  value_flow_velocity: number | null;
+  volatility_detected: boolean;
+  crisis_detected: boolean;
+  timestamp: string | null;
+}
+
+// ── NOVA contributions (agentic-economy-oracle panel) ────────────────────────
+// Shared contracts for the NOVA Contributions panel. Defined here (not in
+// lib/nova.ts) because lib/nova.ts is server-only — the browser, api-client, and
+// badge all need these shapes, so they live in the shared source of truth.
+// lib/nova.ts should import these from @/types rather than redefining them, so
+// the server and browser agree on one contract.
+ 
+// A tombstone record: null ⇒ the contribution is active (not deleted).
+export interface NovaDeletionRecord {
+  deleted_at: string;
+  deleted_by: string;
+  reason:
+    | "MemberRevocation"
+    | "OwnerRequest"
+    | "RetentionPolicy"
+    | "ComplianceRequest";
+}
+ 
+// One NOVA group contribution, as returned by get_group_transactions.
+// Field names are ground truth — do not rename:
+//   • ipfs_hash is the RETRIEVE key (a CID or FastFS path), not "cid"
+//   • file_hash is the on-chain SHA-256 of the PLAINTEXT (what the badge checks)
+//   • timestamp is ns-since-epoch as a string (÷1e6 → ms); null on legacy rows
+export interface NovaTransaction {
+  trans_id: string;
+  group_id: string;
+  user_id: string;
+  file_hash: string;
+  ipfs_hash: string;
+  backend: "FastFS" | "Ipfs" | null;
+  timestamp: string | null;
+  deleted: NovaDeletionRecord | null;
+}
+ 
+// The GET contributions route's response envelope.
+export interface NovaContributionsResponse {
+  group_id: string;
+  contributions: NovaTransaction[];
+}
+ 
+// The material the prepare-retrieve route brokers to the browser so it can
+// decrypt + verify one contribution. `format` null ⇒ v0/legacy.
+export interface PrepareRetrieveResult {
+  key: string;
+  encrypted_b64: string;
+  ipfs_hash: string;
+  location: string;
+  group_id: string;
+  format: { version: 1; compression?: "deflate" } | null;
+}
+ 
+// Per-contribution verify outcome, tracked in the panel keyed by trans_id.
+// Mirrors the NOVA dashboard's VerifyState: idle rows have no entry; a row moves
+// verifying → verified(match) | error.
+export type VerifyState =
+  | { status: "verifying" }
+  | { status: "verified"; match: boolean; recomputed: string }
+  | { status: "error"; message: string };
 
 // ── Infrastructure health ─────────────────────────────────────────────────────
 

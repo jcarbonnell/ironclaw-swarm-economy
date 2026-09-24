@@ -13,7 +13,7 @@
 import { NovaSdk } from 'nova-sdk-js';
 
 const API_KEY    = 'your_nova_api_key_here';
-const ACCOUNT_ID = 'ironclaw-swarm.nova-sdk-6.testnet';
+const ACCOUNT_ID = 'ironclaw-swarm.nova-sdk-7.testnet';
 const GROUP_ID   = 'ironclaw-swarm-economy';
 const CID        = 'Qmd4e01b1a2d7995ef20b3c6e53bc4123c96f7d0f67e5f';  // agent1 round 1
 
@@ -23,7 +23,7 @@ async function main() {
   const sdk = new NovaSdk(ACCOUNT_ID, {
     apiKey:     API_KEY,
     rpcUrl:     'https://rpc.testnet.near.org',
-    contractId: 'nova-sdk-6.testnet',
+    contractId: 'nova-sdk-7.testnet',
   });
 
   console.log(`   Account:  ${sdk.accountId}`);

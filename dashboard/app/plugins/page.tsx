@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, AlertTriangle } from "lucide-react";
@@ -99,6 +100,22 @@ function PluginCard({ entry }: { entry: PluginRegistryEntry }) {
               </span>
             ))}
           </div>
+        )}
+        {!isErrored && (
+          <Link
+            href={`/plugins/${manifest.name}`}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              fontSize: 11,
+              fontFamily: "var(--font-mono)",
+              color: "var(--accent)",
+              textDecoration: "none",
+              flexShrink: 0,
+              padding: "2px 8px",
+            }}
+          >
+            Open →
+          </Link>
         )}
       </div>
 

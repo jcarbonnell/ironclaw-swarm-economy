@@ -33,5 +33,24 @@
       "description": "The distribution of trading strategies (cooperative, defector, hoarder, etc.) assigned across the MESA traders. Shapes the economic dynamics the oracle learns from.",
       "required": false
     }
-  ]
+  ],
+  "ui_extensions": {
+    "top_level_panels": [
+      "mesa-internals",
+      "macro-signals",
+      "coordination-signal",
+      "oracle-training",
+      "nova-contributions",
+      "security"
+    ],
+    "agent_card_fields": [
+      "current_strategy",
+      "reputation_score",
+      "contributions_this_session"
+    ],
+    "sidebar_slots": [
+      "betaweb-stage-indicator",
+      "sandbox-class-banner"
+    ]
+  }
 }

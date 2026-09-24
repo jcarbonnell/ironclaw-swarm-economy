@@ -51,6 +51,12 @@ function validateManifest(raw: unknown, source: string): PluginManifest {
     fleet_shape: Array.isArray(m.fleet_shape) ? (m.fleet_shape as PluginManifest["fleet_shape"]) : undefined,
     personalization: Array.isArray(m.personalization) ? (m.personalization as PluginManifest["personalization"]) : undefined,
     tags: Array.isArray(m.tags) ? (m.tags as string[]) : undefined,
+    // UI extension points (panel/slot IDs). Passed through when present; a
+    // headless plugin omits it. The panel host reads top_level_panels from here.
+    ui_extensions:
+      typeof m.ui_extensions === "object" && m.ui_extensions !== null
+        ? (m.ui_extensions as PluginManifest["ui_extensions"])
+        : undefined,
   };
 }
 
